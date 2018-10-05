@@ -3,6 +3,7 @@ import java.text.*;
 import java.awt.*;
 import javax.swing.*;
 public class BankWriter extends JPanel {
+
     private int WIDTH = 300;
     private int HEIGHT = 200;
     private BankAccount bank;
