@@ -60,7 +60,7 @@ public class Main {
         System.out.println(24 * 4/2);
         System.out.println(ss);
         System.out.println("value of b : " + b);
-        System.out.println("value of s : " + s);
+//        System.out.println("value of s : " + s);
         //8바이트(2^64수를 표현)
         long c;
         char d  = 'a';
