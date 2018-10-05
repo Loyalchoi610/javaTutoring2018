@@ -6,7 +6,6 @@ public class Main {
         switch (a) {
             case 'A':
                 System.out.println("1");
-                break;
             case 'B':
             case 'C':
             case 'D':
@@ -16,7 +15,6 @@ public class Main {
             default:
                 System.out.println("2");
                 break;
-
 
         }
     }

@@ -1,5 +1,25 @@
 package day4.homework.p3;
 
+//아래는 수업시간에 다룬 두 계좌를 관리하는 프로그램 입니다. 유일한 차이점은 javax.swing 을 이용한 그래픽 유저인터페이스를 사용하지 않고 콘솔 입출력을 사용하고 있다는 점입니다.
+//
+//        아래 코드에는 다음 클래스들의 정의가 이미 되어있습니다.
+//
+//        BankAccount
+//        BankReader
+//        BankWriter
+//        AccountController2
+//        AccountManger2
+//        이 두 계좌 관리 프로그램에 다음 기능을 추가하세요.
+//
+//        "T 금액" 을 명령어로 입력받아서 현재 활성화 된 계좌에서 비활성 계좌로 금액만큼 이체
+//        참고로, 이체는 영어로 transfer 이다.
+//        "I 이율" 을 명령어로 입력받아서, 현재 활성화 된 계좌의 금액을 이율만큼 증가
+//        이율은 0~1 범위의 실수이다.
+//        이율은 소수점 두자리까지만 인정한다. 예, 0.055 => 0.05
+//        이율만큼 증가한다는 것은 (금액 * 이율) 만큼 증가시킨다는 뜻이다.
+//        참고로, 이율은 영어로 interest 이다.
+//        아래 코드를 코드온웹 인터페이스에서 바로 돌려볼 수 있고, 전체 코드를 파일 "AccountManager.java"에 붙여넣고 실행하면 돌려볼 수 있습니다 (아래 코드를 보시면 main 메소드가 있는 AccountManager 클래스만 public 으로 정의해주고 있고 나머지 클래스는 public 없이 정의하고 있다는 것을 아실 수 있습니다. 이렇게 여러개의 클래스를 파일 하나에 정의하는 것도 가능합니다).
+
 import java.text.DecimalFormat;
 import java.util.Scanner;
 class AccountManager {
@@ -62,6 +82,7 @@ class BankReader
     public char readCommand(String message) {
         Scanner scan = new Scanner(System.in);  // Reading from System.in
         System.out.println(message);
+        //"d 1000" -> 반환값 D
         input_line = scan.nextLine().toUpperCase();
         return input_line.charAt(0);
     }
@@ -69,8 +90,13 @@ class BankReader
     public int readAmount()
     {
         int answer = 0;
-        String s = input_line.substring(1, input_line.length());
+//        input_line = "d 1000";
+//        1~input_line.length()-1
+//        String a ="abc"; a =0 b= 1 c =2 // substring(1,length) 1~3-1
+//        a.length() = 3;
 
+        String s = input_line.substring(1, input_line.length());
+        //1000
         if(s.length() > 0) {
             double dollars_cents = new Double(s).doubleValue();
             answer = (int)(dollars_cents*100);
@@ -123,7 +149,7 @@ class BankWriter
 class AccountController
 {
     private BankReader reader; // input view
-    private BankAccount primary_account, secondary_account, account;
+    private BankAccount primary_account, secondary_account, account, disabled_account;
     private BankWriter primary_writer, secondary_writer, writer;
 
     public AccountController (BankReader r, BankAccount a1,BankWriter w1, BankAccount a2, BankWriter w2)
@@ -134,6 +160,7 @@ class AccountController
         secondary_account = a2;
         secondary_writer = w2;
         account = primary_account;
+        disabled_account = secondary_account;
         writer = primary_writer;
     }
 
@@ -154,9 +181,11 @@ class AccountController
         switch (command) {
             case 'P':
                 resetAccount(primary_account, primary_writer);
+                disabled_account = secondary_account;
                 break;
             case 'S':
                 resetAccount(secondary_account, secondary_writer);
+                disabled_account = primary_account;
                 break;
             case 'Q':
                 System.out.println("Quit");
@@ -179,13 +208,8 @@ class AccountController
             }
             case 'T':
                 // 'T 금액', 활성 계좌에서 비활성 계좌로 금액만큼 이체
-                if(account==primary_account){
-                    account.withdraw(reader.readAmount());
-                    secondary_account.deposit(reader.readAmount());
-                }else{
-                    account.withdraw(reader.readAmount());
-                    primary_account.deposit(reader.readAmount());
-                }
+                    transfer(account,disabled_account,reader.readAmount());
+
                 break;
             case 'I':
                 // 'I 이율', 활성 계좌의 금액을 이율만큼 증가
